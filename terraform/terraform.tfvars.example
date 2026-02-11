@@ -1,0 +1,44 @@
+# Example terraform.tfvars file
+# Copy this to terraform.tfvars and fill in your values
+
+# GCP Project Configuration
+project_id         = "your-project-id"
+project_name       = "Analytics Platform"
+organisation_id    = null # Set if creating project under org
+folder_id          = null # Set if creating project in folder
+billing_account_id = null # Set if creating new project
+
+# Region Configuration (UK regions)
+region = "europe-west2" # London
+
+# Environment
+environment = "prod"
+
+# GKE Configuration
+gke_cluster_name = "analytics-dashboards"
+
+# IAM Configuration
+data_scientists_email_list = [
+  "alice@example.com",
+  "bob@example.com",
+]
+
+dashboard_users_email_list = [
+  "user1@example.com",
+  "user2@example.com",
+]
+
+# Storage Configuration
+data_storage_bucket_name = "" # Leave empty for auto-generated name
+
+# Security Configuration
+enable_binary_authorization = true
+enable_cloud_sql            = true # Set to false if you don't need Secret Manager
+cloud_sql_tier              = "db-f1-micro"
+
+# Labels
+labels = {
+  application = "analytics-platform"
+  managed_by  = "terraform"
+  team        = "data-science"
+}
