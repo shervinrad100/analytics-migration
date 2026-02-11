@@ -342,14 +342,3 @@ For issues or questions:
 1. Check the troubleshooting section
 2. Review GCP documentation
 3. Open an issue in this repository
-
-## License
-
-[Your License]
-
-## Additional Resources
-
-- [GKE Autopilot Documentation](https://cloud.google.com/kubernetes-engine/docs/concepts/autopilot-overview)
-- [Cloud Storage Best Practices](https://cloud.google.com/storage/docs/best-practices)
-- [Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity)
-- [Binary Authorization](https://cloud.google.com/binary-authorization/docs)
