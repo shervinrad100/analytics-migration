@@ -1,0 +1,59 @@
+name: Deploy Customer Analytics
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'dashboards/customer-analytics/**'
+      - '.github/workflows/deploy-customer-analytics.yaml'
+  workflow_dispatch:
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  GKE_CLUSTER: analytics-dashboards
+  GKE_REGION: europe-west2
+  IMAGE: customer-analytics
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
+
+    - name: Configure Docker for GCR
+      run: gcloud auth configure-docker
+
+    - name: Build Docker image
+      run: |
+        cd dashboards/customer-analytics
+        docker build -t gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA \
+                     -t gcr.io/$PROJECT_ID/$IMAGE:latest .
+
+    - name: Push Docker image to GCR
+      run: |
+        docker push gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA
+        docker push gcr.io/$PROJECT_ID/$IMAGE:latest
+
+    - name: Get GKE credentials
+      run: |
+        gcloud container clusters get-credentials $GKE_CLUSTER \
+          --region $GKE_REGION \
+          --project $PROJECT_ID
+
+    - name: Deploy to GKE
+      run: |
+        kubectl set image deployment/customer-analytics \
+          dashboard=gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA \
+          --namespace=default
+
+        kubectl rollout status deployment/customer-analytics --namespace=default

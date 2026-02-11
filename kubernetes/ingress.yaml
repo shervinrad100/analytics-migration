@@ -1,0 +1,39 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dashboards-ingress
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+    kubernetes.io/ingress.global-static-ip-name: "dashboards-ip"
+    ingress.gcp.kubernetes.io/pre-shared-cert: "dashboards-cert"
+    # Enable IAP for authentication
+    # iap.ingress.kubernetes.io/enabled: "true"
+    # iap.ingress.kubernetes.io/oauth-client-id: "YOUR_CLIENT_ID"
+    # iap.ingress.kubernetes.io/oauth-client-secret: "YOUR_CLIENT_SECRET"
+spec:
+  rules:
+  - host: dashboards.yourdomain.com
+    http:
+      paths:
+      - path: /sales
+        pathType: Prefix
+        backend:
+          service:
+            name: sales-dashboard
+            port:
+              number: 80
+      - path: /customer
+        pathType: Prefix
+        backend:
+          service:
+            name: customer-analytics
+            port:
+              number: 80
+      - path: /financial
+        pathType: Prefix
+        backend:
+          service:
+            name: financial-reports
+            port:
+              number: 80
